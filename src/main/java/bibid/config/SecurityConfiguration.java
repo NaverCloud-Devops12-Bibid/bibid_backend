@@ -11,6 +11,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
@@ -36,27 +37,28 @@ public class SecurityConfiguration {
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> {
                     httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
-//                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
-//                    authorizationManagerRequestMatcherRegistry.requestMatchers(
-//                            "/swagger-ui.html",
-//                            "/swagger-ui/**",
-//                            "/v3/api-docs/**",
-//                            "/members/**",
-//                            "/ws/**",
-//                            "/auction/**",
-//                            "/category/**",
-//                            "/api/ncloud/**",
-//                            "/mypage/**",
-//                            "/auth/**",
-//                            "/specialAuction/list",
-//                            "/auctionDetail/**"
-//                    ).permitAll();
-//                    authorizationManagerRequestMatcherRegistry.anyRequest().authenticated();
-//                })
-                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
-                        authorizationManagerRequestMatcherRegistry
-                                .anyRequest().permitAll() // 모든 요청 허용
-                )
+                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
+                    authorizationManagerRequestMatcherRegistry.requestMatchers(
+                            "/swagger-ui.html",
+                            "/swagger-ui/**",
+                            "/v3/api-docs/**",
+                            "/members/**",
+                            "/ws/**",
+                            "/auction/**",
+                            "/category/**",
+                            "/api/ncloud/**",
+                            "/mypage/**",
+                            "/auth/**",
+                            "/specialAuction/list",
+                            "/auctionDetail/**"
+                    ).permitAll();
+                    authorizationManagerRequestMatcherRegistry.anyRequest().authenticated();
+                })
+                .headers(httpSecurityHeadersConfigurer ->
+                        httpSecurityHeadersConfigurer.addHeaderWriter(new StaticHeadersWriter(
+                                "Set-Cookie",
+                                "cookieName=cookieValue; Secure; HttpOnly; SameSite=None"
+                        )))
                 .addFilterAfter(jwtAuthenticationFilter, CorsFilter.class)
                 .build();
     }
