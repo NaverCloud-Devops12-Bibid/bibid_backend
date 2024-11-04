@@ -110,6 +110,17 @@ public class AuctionItemDetailServiceImpl implements AuctionItemDetailService {
                 .orElseThrow(() -> new RuntimeException("Auction not found with index: " + auctionIndex));
         auctionInfo.setAuction(auction);
 
+        // 현재 입찰자의 계좌 금액 확인 및 차감
+        Account currentBidderAccount = accountRepository.findByMember_MemberIndex(member.getMemberIndex())
+                .orElseThrow(() -> new RuntimeException("현재 입찰자의 계좌 정보를 찾을 수 없습니다."));
+        int currentBalance = Integer.parseInt(currentBidderAccount.getUserMoney());
+        int bidAmount = bidRequestDto.getUserBiddingPrice().intValue();
+
+        // 계좌 금액 확인: 잔액이 입찰 금액보다 적으면 예외 발생
+        if (currentBalance < bidAmount) {
+            throw new RuntimeException("잔액이 부족합니다.");
+        }
+
         // 입찰자 정보 조회 및 할당
         auctionInfo.setBidder(member);
 
@@ -122,10 +133,8 @@ public class AuctionItemDetailServiceImpl implements AuctionItemDetailService {
         List<AuctionInfo> previousBids = auctionInfoRepository.findByAuctionOrderByBidTimeDesc(auction);
 
         Long higherBid = auctionInfo.getBidAmount();
-        AuctionInfo previousBidInfo = previousBids.stream()
-                .filter(info -> !info.getBidder().equals(member)) // 현재 입찰자를 제외한 입찰 정보
-                .findFirst()
-                .orElse(null); // 직전 입찰자가 없을 경우 null
+        // 이전 입찰자 정보 가져오기 (최신 입찰 정보를 가져옴)
+        AuctionInfo previousBidInfo = previousBids.isEmpty() ? null : previousBids.get(0);
 
         // 이전 입찰자가 있을 경우, 해당 입찰자의 입찰 금액 및 정보를 사용
         if (previousBidInfo != null) {
@@ -157,18 +166,16 @@ public class AuctionItemDetailServiceImpl implements AuctionItemDetailService {
 
             log.info("이전 입찰자 {}에게 {} 원 환불 완료 및 히스토리 기록", previousBidInfo.getBidder().getNickname(), lowerBid);
 
-            // lowerBid와 이전 입찰자가 존재할 경우 알림 전송
-            notificationService.notifyHigherBid(previousHighestBidder, auctionIndex, higherBid, lowerBid);
+            // 현재 입찰자와 직전 입찰자가 다른 경우에만 알림 전송
+            if (!previousHighestBidder.getNickname().equals(member.getNickname())) {
+                // 알림 전송
+                notificationService.notifyHigherBid(previousHighestBidder, auctionIndex, higherBid, lowerBid);
+            } else{
+                currentBidderAccount.setUserMoney(previousBidderAccount.getUserMoney());
+                currentBalance = Integer.parseInt(currentBidderAccount.getUserMoney());
+            }
         }
 
-        // 현재 입찰자의 금액 차감
-        Account currentBidderAccount = accountRepository.findByMember_MemberIndex(member.getMemberIndex())
-                .orElseThrow(() -> new RuntimeException("현재 입찰자의 계좌 정보를 찾을 수 없습니다."));
-        int currentBalance = Integer.parseInt(currentBidderAccount.getUserMoney());
-        int bidAmount = bidRequestDto.getUserBiddingPrice().intValue();
-        if (currentBalance < bidAmount) {
-            throw new RuntimeException("잔액이 부족합니다.");
-        }
         currentBidderAccount.setUserMoney(String.valueOf(currentBalance - bidAmount));
         accountRepository.save(currentBidderAccount);
         log.info("현재 입찰자 {}의 계좌에서 {} 원 차감 완료", member.getNickname(), bidAmount);
@@ -269,7 +276,7 @@ public class AuctionItemDetailServiceImpl implements AuctionItemDetailService {
 
                 // 낙찰자와 판매자에게 알림 전송
                 notificationService.notifyAuctionWin(lastBidInfo.getBidder(), auctionIndex);
-                notificationService.notifyAuctionSold(auction.getMember(), auctionIndex);
+                notificationService.notifyAuctionSold(auction.getMember(), lastBidInfo, auctionIndex);
 
                 log.info("Auction finalized with winner for auction ID: {}, winner ID: {}, winning bid: {}",
                         auctionIndex, lastBidInfo.getBidder().getMemberIndex(), lastBidInfo.getBidAmount());
