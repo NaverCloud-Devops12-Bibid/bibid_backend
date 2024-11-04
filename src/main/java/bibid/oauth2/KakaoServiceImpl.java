@@ -1,7 +1,9 @@
 package bibid.oauth2;
 
+import bibid.entity.Account;
 import bibid.entity.CustomUserDetails;
 import bibid.entity.Member;
+import bibid.entity.SellerInfo;
 import bibid.jwt.JwtProvider;
 import bibid.repository.member.MemberRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -141,6 +143,18 @@ public class KakaoServiceImpl {
                     .oauthType("Kakao")
                     .build();
 
+            // SellerInfo와 Account를 생성하여 Member에 설정
+            SellerInfo sellerInfo = SellerInfo.builder()
+                    .member(kakaoMember)
+                    .build();
+            kakaoMember.setSellerInfo(sellerInfo);
+
+            Account account = Account.builder()
+                    .member(kakaoMember)
+                    .userMoney("1000000")
+                    .build();
+            kakaoMember.setAccount(account);
+
             memberRepository.save(kakaoMember);
 
         }
@@ -201,7 +215,7 @@ public class KakaoServiceImpl {
             item.put("email", member.getEmail());
             item.put("memberAddress", "***");
             item.put("memberId", member.getMemberId());
-            item.put("nickname", member.getName());
+            item.put("nickname", member.getNickname());
             item.put("name", "***");
             item.put("memberPnum", "010********");
 
@@ -213,36 +227,36 @@ public class KakaoServiceImpl {
 
     }
 
-    public String checkLogin(Principal principal) {
-        if (principal == null) {
-            throw new IllegalStateException("현재 인증된 사용자를 찾을 수 없습니다.");
-        }
-
-        String username = principal.getName();
-        System.out.println("현재 사용자명:" + username);
-
-        CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(username);
-        if (userDetails == null) {
-            throw new RuntimeException("사용자를 찾을 수 없습니다.");
-        }
-
-        Member memberId = userDetails.getMember();
-        if (memberId == null) {
-            throw new RuntimeException("Member 정보를 찾을 수 없습니다.");
-        }
-
-        String findMemberId = memberId.getMemberId();
-
-        Optional <Member> member = memberRepository.findByMemberId(findMemberId);
-        if (!member.isPresent()) {
-            throw new RuntimeException("Member not found");
-        }
-
-        Member loginMember = member.get();
-
-        return loginMember.getRole();
-
-    }
+//    public String checkLogin(Principal principal) {
+//        if (principal == null) {
+//            throw new IllegalStateException("현재 인증된 사용자를 찾을 수 없습니다.");
+//        }
+//
+//        String username = principal.getName();
+//        System.out.println("현재 사용자명:" + username);
+//
+//        CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(username);
+//        if (userDetails == null) {
+//            throw new RuntimeException("사용자를 찾을 수 없습니다.");
+//        }
+//
+//        Member memberId = userDetails.getMember();
+//        if (memberId == null) {
+//            throw new RuntimeException("Member 정보를 찾을 수 없습니다.");
+//        }
+//
+//        String findMemberId = memberId.getMemberId();
+//
+//        Optional <Member> member = memberRepository.findByMemberId(findMemberId);
+//        if (!member.isPresent()) {
+//            throw new RuntimeException("Member not found");
+//        }
+//
+//        Member loginMember = member.get();
+//
+//        return loginMember.getRole();
+//
+//    }
 
 
 //    public String convertImageToBase64(String imageUrl) throws Exception {
