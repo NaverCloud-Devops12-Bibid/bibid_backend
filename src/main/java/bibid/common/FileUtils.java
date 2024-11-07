@@ -2,7 +2,7 @@ package bibid.common;
 
 import bibid.config.NaverConfiguration;
 import bibid.dto.AuctionImageDto;
-import bibid.dto.ProfileImageDto;
+import bibid.dto.MypageProfileFileDto;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
@@ -11,7 +11,6 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,10 +24,6 @@ import java.util.UUID;
 
 @Component
 public class FileUtils {
-
-    @Value("${cloud.aws.s3.bucket.name}")
-    String bucket;
-
     private final AmazonS3 s3;
 
     public FileUtils(NaverConfiguration naverConfiguration) {
@@ -50,10 +45,10 @@ public class FileUtils {
                 .build();
     }
 
-    public ProfileImageDto parserFileInfo(MultipartFile multipartFile, String directory) {
-        String bucketName = bucket;
+    public MypageProfileFileDto parserFileInfo(MultipartFile multipartFile, String directory) {
+        String bucketName = "bitcamp121";
 
-        ProfileImageDto profileImageDto = new ProfileImageDto();
+        MypageProfileFileDto boardFileDto = new MypageProfileFileDto();
 
         // 다른 사용자가 같은 파일명의 파일을 업로드 했을 때
         // 덮어써지는 것을 방지하기 위해서 파일명을 랜덤값_날짜시간_파일명으로 지정
@@ -94,24 +89,23 @@ public class FileUtils {
 
         if(!type.equals("")) {
             if(type.startsWith("image")) {
-                profileImageDto.setFiletype("image");
+                boardFileDto.setFiletype("image");
             } else {
-                profileImageDto.setFiletype("etc");
+                boardFileDto.setFiletype("etc");
             }
         } else {
-            profileImageDto.setFiletype("etc");
+            boardFileDto.setFiletype("etc");
         }
 
-        profileImageDto.setNewfilename(fileName);
-        profileImageDto.setFilesize(multipartFile.getSize());
-        profileImageDto.setOriginalname(multipartFile.getOriginalFilename());
-        profileImageDto.setFilepath(directory);
+        boardFileDto.setFilename(fileName);
+        boardFileDto.setFileoriginname(multipartFile.getOriginalFilename());
+        boardFileDto.setFilepath(directory);
 
-        return profileImageDto;
+        return boardFileDto;
     }
 
     public AuctionImageDto auctionImageParserFileInfo(MultipartFile multipartFile, String directory) {
-        String bucketName = bucket;
+        String bucketName = "bitcamp121";
 
         AuctionImageDto auctionImageDto = new AuctionImageDto();
 

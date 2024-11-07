@@ -30,8 +30,6 @@ public class QAuctionInfo extends EntityPathBase<AuctionInfo> {
 
     public final QMember bidder;
 
-    public final StringPath bidderNickname = createString("bidderNickname");
-
     public final DateTimePath<java.time.LocalDateTime> bidTime = createDateTime("bidTime", java.time.LocalDateTime.class);
 
     public QAuctionInfo(String variable) {
@@ -53,7 +51,7 @@ public class QAuctionInfo extends EntityPathBase<AuctionInfo> {
     public QAuctionInfo(Class<? extends AuctionInfo> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.auction = inits.isInitialized("auction") ? new QAuction(forProperty("auction"), inits.get("auction")) : null;
-        this.bidder = inits.isInitialized("bidder") ? new QMember(forProperty("bidder"), inits.get("bidder")) : null;
+        this.bidder = inits.isInitialized("bidder") ? new QMember(forProperty("bidder")) : null;
     }
 
 }

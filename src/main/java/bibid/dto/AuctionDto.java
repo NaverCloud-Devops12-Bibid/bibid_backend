@@ -1,7 +1,6 @@
 package bibid.dto;
 
 import bibid.entity.*;
-import jakarta.persistence.Transient;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -40,11 +39,12 @@ public class AuctionDto {
     private LocalDateTime moddate; // 경매 수정시간
 
     private List<AuctionImageDto> auctionImageDtoList;
+    private StreamingDto streamingDto;
+    private boolean isStreamingCreated;
+    private ChatRoomDto chatRoomDto;
+    private boolean isChatRoomCreated;
     private List<AuctionInfoDto> auctionInfoDtoList;
     private AuctionDetailDto auctionDetailDto;
-
-    private String searchKeyword;
-    private String searchCondition;
 
     public Auction toEntity(Member member) {
         return Auction.builder()
@@ -68,10 +68,11 @@ public class AuctionDto {
                 .regdate(this.regdate)
                 .moddate(this.moddate)
                 .auctionImageList(new ArrayList<>())
+                .streaming(null)
+                .isStreamingCreated(this.isStreamingCreated)
                 .chatRoom(null)
+                .isChatRoomCreated(this.isChatRoomCreated)
                 .auctionDetail(null)
-                .searchKeyword(this.searchKeyword)
-                .searchCondition(this.searchCondition)
                 .build();
     }
 

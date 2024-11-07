@@ -19,7 +19,7 @@ import lombok.*;
 public class QnAFile {
     @Id
     @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
+            strategy = GenerationType.IDENTITY,
             generator = "qnaFileSeqGenerator"
     )
     private Long qnaFileIndex;

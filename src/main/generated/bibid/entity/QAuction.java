@@ -48,7 +48,9 @@ public class QAuction extends EntityPathBase<Auction> {
 
     public final NumberPath<Long> instantPurchasePrice = createNumber("instantPurchasePrice", Long.class);
 
-    public final QLiveStationChannel liveStationChannel;
+    public final BooleanPath isChatRoomCreated = createBoolean("isChatRoomCreated");
+
+    public final BooleanPath isStreamingCreated = createBoolean("isStreamingCreated");
 
     public final QMember member;
 
@@ -65,6 +67,8 @@ public class QAuction extends EntityPathBase<Auction> {
     public final DateTimePath<java.time.LocalDateTime> startingLocalDateTime = createDateTime("startingLocalDateTime", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> startingPrice = createNumber("startingPrice", Long.class);
+
+    public final QStreaming streaming;
 
     public final StringPath subcategory = createString("subcategory");
 
@@ -90,8 +94,8 @@ public class QAuction extends EntityPathBase<Auction> {
         super(type, metadata, inits);
         this.auctionDetail = inits.isInitialized("auctionDetail") ? new QAuctionDetail(forProperty("auctionDetail"), inits.get("auctionDetail")) : null;
         this.chatRoom = inits.isInitialized("chatRoom") ? new QChatRoom(forProperty("chatRoom"), inits.get("chatRoom")) : null;
-        this.liveStationChannel = inits.isInitialized("liveStationChannel") ? new QLiveStationChannel(forProperty("liveStationChannel")) : null;
-        this.member = inits.isInitialized("member") ? new QMember(forProperty("member"), inits.get("member")) : null;
+        this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
+        this.streaming = inits.isInitialized("streaming") ? new QStreaming(forProperty("streaming"), inits.get("streaming")) : null;
     }
 
 }

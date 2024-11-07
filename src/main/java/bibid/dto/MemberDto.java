@@ -1,15 +1,7 @@
 package bibid.dto;
 
 import bibid.entity.Member;
-import bibid.entity.ProfileImage;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.OneToOne;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -20,7 +12,6 @@ import java.sql.Timestamp;
 public class MemberDto {
     private Long memberIndex;
     private String name;
-    private String oauthType;
     private String memberId;
     private String memberPw;
     private String nickname;
@@ -29,19 +20,13 @@ public class MemberDto {
     private String role;
     private String memberAddress;
     private String addressDetail;
-    private ProfileImageDto profileImageDto;
-    private AccountDto accountDto;
-    private Timestamp createTime;
+    private String profileUrl;
     private String token;
-    private String refreshToken;
-    private Boolean rememberMe;
-    private SellerInfoDto sellerInfoDto;
 
-    public Member toEntity() {
+    public Member toEntiy() {
         return Member.builder()
                 .memberIndex(this.memberIndex)
                 .name(this.name)
-                .oauthType(this.oauthType)
                 .memberId(this.memberId)
                 .memberPw(this.memberPw)
                 .nickname(this.nickname)
@@ -50,13 +35,20 @@ public class MemberDto {
                 .role(this.role)
                 .memberAddress(this.memberAddress)
                 .addressDetail(this.addressDetail)
-                .profileImage(null)
-                .account(null)
-                .createTime(this.createTime)
-                .refreshToken(this.refreshToken)
-                .rememberMe(this.rememberMe)
-                .sellerInfo(null)
+                .profileUrl(this.profileUrl)
                 .build();
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

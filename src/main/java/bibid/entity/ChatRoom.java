@@ -34,10 +34,11 @@ public class ChatRoom {
     @JoinColumn(name = "auctionIndex")
     private Auction auction;
 
-    private LocalDateTime createdAt;
-
     // 채팅방의 이름이나 정보
     private String roomName;
+
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
     private List<Chat> chatList;
@@ -49,8 +50,9 @@ public class ChatRoom {
         return ChatRoomDto.builder()
                 .chatRoomIndex(this.getChatRoomIndex())
                 .roomName(this.roomName)
+                .startTime(this.startTime)
+                .endTime(this.endTime)
                 .auctionIndex(this.auction.getAuctionIndex())
-                .createdAt(this.createdAt)
                 .chatDtoList(Optional.ofNullable(chatList).map(list -> list.stream().map(Chat::toDto).toList())
                         .orElse(new ArrayList<>()))
                 .chatRoomManagementDtoList(Optional.ofNullable(chatRoomManagementList).map(list -> list.stream().map(ChatRoomManagement::toDto).toList())

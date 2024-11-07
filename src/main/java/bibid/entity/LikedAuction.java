@@ -28,11 +28,11 @@ public class LikedAuction {
     private Long likedAuctionIndex;
 
     @ManyToOne
-    @JoinColumn(name = "auctionIndex")
+    @JoinColumn(name = "auctionIndex") // 외래 키: 스트리밍 ID
     private Auction auction;
 
     @ManyToOne
-    @JoinColumn(name = "memberIndex")
+    @JoinColumn(name = "memberIndex") // 외래 키: 스트리밍 ID
     private Member member;
 
     public LikedAuctionDto toDto() {

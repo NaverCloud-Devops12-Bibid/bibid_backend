@@ -36,7 +36,6 @@ public class AuctionInfo {
 
     private LocalDateTime bidTime; // 입찰시간
     private Long bidAmount; // 입찰금액
-    private String bidderNickname;
 
     public AuctionInfoDto toDto() {
         return AuctionInfoDto.builder()
@@ -45,7 +44,6 @@ public class AuctionInfo {
                 .bidderIndex(this.bidder.getMemberIndex())
                 .bidTime(this.bidTime)
                 .bidAmount(this.bidAmount)
-                .bidderNickname(this.bidderNickname)
                 .build();
     }
 

@@ -32,8 +32,6 @@ public class QAuctionDetail extends EntityPathBase<AuctionDetail> {
 
     public final NumberPath<Long> winnerIndex = createNumber("winnerIndex", Long.class);
 
-    public final StringPath winnerNickname = createString("winnerNickname");
-
     public final NumberPath<Long> winningBid = createNumber("winningBid", Long.class);
 
     public QAuctionDetail(String variable) {
