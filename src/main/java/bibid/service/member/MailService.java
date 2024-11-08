@@ -3,6 +3,7 @@ package bibid.service.member;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
@@ -10,10 +11,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MailService {
 
-
     private final JavaMailSender MailSender;
 
     private static int number;
+
+    @Value("${send.mail.address}")
+    private String sendMailAddress;
 
     // 랜덤으로 숫자 생성
     public static void createNumber() {
@@ -25,7 +28,7 @@ public class MailService {
 
         MimeMessage message = MailSender.createMimeMessage();
 
-            try{message.setFrom(email);
+            try{message.setFrom(sendMailAddress);
             message.setRecipients(MimeMessage.RecipientType.TO, email);
             message.setSubject("[BIBID] 요청하신 통합회원 인증번호를 안내해드립니다.");
             String body = "<html>" +
