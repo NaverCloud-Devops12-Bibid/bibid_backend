@@ -38,3 +38,9 @@ out/
 
 ### VS Code ###
 .vscode/
+src/main/generated/bibid/entity/QAccount.java
+src/main/generated/bibid/entity/QAccountUseHistory.java
+src/main/generated/bibid/entity/QAddress.java
+src/main/generated/bibid/entity/QEvaluation.java
+src/main/generated/bibid/entity/QQnA.java
+src/main/generated/bibid/entity/QQnAFile.java
